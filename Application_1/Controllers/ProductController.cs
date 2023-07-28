@@ -1,4 +1,5 @@
-﻿using Application_1.Models.Dto;
+﻿using Application_1.Data;
+using Application_1.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,14 +10,28 @@ namespace Application_1.Controllers
     public class ProductController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<ProductDto> getAllProdcts()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<ProductDto>> getAllProdcts()
         {
-            var products = new List<ProductDto>
+            return Ok(ProductDb.ProductList);
+        }
+        [HttpGet("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ProductDto> getProductById(int id)
+        {
+            if(id == 0)
             {
-                new ProductDto { Id = 1,Name="Soap"},
-                new ProductDto { Id = 2,Name="Toothpaste"}
-            };
-            return products;
+                return BadRequest();
+            }
+            var product = ProductDb.ProductList.FirstOrDefault(p => p.Id == id);
+            if(product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
     }
 }
