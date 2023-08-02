@@ -35,6 +35,9 @@ namespace Application_1.Controllers
             return Ok(product); //return200 status code
         }
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult <ProductDto> CreateProduct ([FromBody]ProductDto product)
         {
             if (product == null)
@@ -43,7 +46,7 @@ namespace Application_1.Controllers
             }
             if(product.Id > 0)
             {
-                return StatusCode(StatusCodes.Status400BadRequest);//Custom status codes
+                return StatusCode(101);//Custom status codes
             }
             int MaxProductId = ProductDb.ProductList.OrderByDescending(p => p.Id).FirstOrDefault().Id;
             product.Id = MaxProductId + 1;
