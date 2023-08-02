@@ -2,6 +2,7 @@
 using Application_1.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace Application_1.Controllers
 {
@@ -15,7 +16,7 @@ namespace Application_1.Controllers
         {
             return Ok(ProductDb.ProductList);
         }
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}",Name = "getProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
 
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,7 +32,23 @@ namespace Application_1.Controllers
             {
                 return NotFound();
             }
-            return Ok(product);
+            return Ok(product); //return200 status code
+        }
+        [HttpPost]
+        public ActionResult <ProductDto> CreateProduct ([FromBody]ProductDto product)
+        {
+            if (product == null)
+            {
+                return BadRequest(product);
+            }
+            if(product.Id > 0)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);//Custom status codes
+            }
+            int MaxProductId = ProductDb.ProductList.OrderByDescending(p => p.Id).FirstOrDefault().Id;
+            product.Id = MaxProductId + 1;
+            ProductDb.ProductList.Add(product);
+            return CreatedAtRoute("getProductById", new { id =product.Id},product);
         }
     }
 }
