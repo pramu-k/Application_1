@@ -53,5 +53,23 @@ namespace Application_1.Controllers
             ProductDb.ProductList.Add(product);
             return CreatedAtRoute("getProductById", new { id =product.Id},product);
         }
+        [HttpDelete("{id:int}",Name ="DeleteProduct")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult DeleteProduct(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var product = ProductDb.ProductList.FirstOrDefault(p => p.Id == id);
+            if(product == null)
+            {
+                return NotFound();
+            }
+            ProductDb.ProductList.Remove(product);
+            return NoContent();
+        }
     }
 }
