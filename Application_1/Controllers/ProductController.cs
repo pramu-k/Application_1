@@ -71,5 +71,18 @@ namespace Application_1.Controllers
             ProductDb.ProductList.Remove(product);
             return NoContent();
         }
+        [HttpPut("{id:int}",Name="UpdateProduct")]
+        public IActionResult UpdateProduct(int id,[FromBody]ProductDto productDto)
+        {
+            if(productDto==null || id!=productDto.Id)
+            {
+                return BadRequest();
+            }
+            var product = ProductDb.ProductList.FirstOrDefault(p => p.Id == id);
+            product.Name= productDto.Name;
+            return NoContent();
+         
+        }
     }
+
 }
